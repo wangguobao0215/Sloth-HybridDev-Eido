@@ -153,6 +153,32 @@ WHERE d.status NOT IN ('Archived', 'Superseded', 'Deprecated')
 ORDER BY freshness_pct DESC;
 ```
 
+> **sqlite-utils 快捷查询**：上述 SQL 也可通过命令行一行执行：
+> ```bash
+> sqlite-utils query .wisdomcore.db "SELECT id, title, CAST(julianday('now')-julianday(updated_at) AS INT) AS days_stale FROM documents WHERE status NOT IN ('Archived','Superseded') AND julianday('now')-julianday(updated_at) > 90" --table
+> ```
+
+### Datasette 实时监控
+
+文档鲜度的日常巡检可通过 Datasette Web UI 完成，无需启动 AI 对话：
+
+```bash
+# 启动 Datasette
+datasette .wisdomcore.db -p 8001
+
+# 访问预置查询：http://localhost:8001/wisdomcore/zombie-documents
+# 该查询自动列出所有超过 90 天未更新的活跃文档
+```
+
+Datasette 的 JSON API 也可供外部监控系统消费：
+
+```bash
+# 获取僵尸文档列表（JSON 格式）
+curl "http://localhost:8001/wisdomcore/zombie-documents.json?_shape=array"
+```
+
+> 推荐将 Datasette 启动命令加入团队的开发环境启动脚本（如 `Makefile` 或 `docker-compose.yml`），确保仪表盘随项目启动。
+
 ### 3.2 通知升级规则
 
 | 鲜度等级 | 通知对象 | 通知频率 | 通知方式 |

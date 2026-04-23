@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.1.0] - 2026-04-23
+
+### Added
+
+- 推荐工具链体系（architecture.md 新增第 2 章）：
+  - **sqlite-utils** (P0) — SQLite 读写 CLI + 库，替代自研同步脚本核心逻辑
+  - **remark-lint-frontmatter-schema** (P0) — Frontmatter JSON Schema 校验，行号级错误定位
+  - **Datasette** (P1) — SQLite Web UI 自助仪表盘，Skill-H 双通道输出
+  - **phodal/adr** (P1) — ADR CLI 工具（中文友好），支持 `adr new/list/export`
+  - **git-cliff** (P1) — 自动 CHANGELOG 生成，降低 R3 风险
+  - **Mermaid CLI** (P2) — 依赖图 SVG/PNG 导出至 05_Reports/
+  - **markdownlint-cli** (P2) — Markdown 风格一致性检查
+- Skill-H 新增 Datasette 自助服务模式（双通道输出：AI 对话 + Web UI）
+- Skill-A 新增 Agent 交互记忆层（memweave 架构启发，`.meta/memory/`）
+- ADR 框架新增 phodal/adr CLI 集成章节
+- 度量仪式新增 git-cliff 自动 CHANGELOG 配置（`.meta/cliff.toml`）
+- 工具链集成架构图（Pre-commit Pipeline + Post-commit Hook + Datasette Serve）
+- 文档治理新增 Datasette 实时监控和 JSON API 消费方式
+- v2.0 候选工具观望清单：Trackio、DVC、memweave/sqlite-memory
+
 ## [1.0.0] - 2026-04-23
 
 ### Added

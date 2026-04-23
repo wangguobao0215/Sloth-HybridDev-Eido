@@ -319,6 +319,16 @@ W08     91%     88%     73%     82%     4.1d    2
 /.meta/      @tech-lead
 ```
 
+> **markdownlint 风格一致性**：所有文档在 pre-commit 时经过 markdownlint-cli 检查，确保标题层级、列表缩进、空行规范的一致性。配置文件 `.meta/.markdownlint.yaml`：
+>
+> ```yaml
+> MD013: false          # 不限制行长度（中文文档天然较长）
+> MD033: false          # 允许 HTML 内联（Mermaid 等）
+> MD041: false          # 不要求第一行是 H1（Frontmatter 优先）
+> MD024:
+>   siblings_only: true # 允许不同层级下的同名标题
+> ```
+
 **成长阶段（20-50 人）**：Git submodules + CI/CD 强制权限检查 + 审计日志增强
 
 **企业阶段（50+ 人）**：Enterprise RBAC + SSO 集成 + 审批流引擎
@@ -422,6 +432,7 @@ CREATE TABLE IF NOT EXISTS change_log (
 - Frontmatter JSON Schema（prd/exp/ca/adr/gtm 五套）
 - SQLite Schema（documents/dependencies/status_history/change_log/bad_cases/metrics_snapshots）
 - Git 仓库初始化（.gitignore / CODEOWNERS / README.md）
+- 工具链安装验证：sqlite-utils + remark-lint + Datasette + git-cliff 安装成功并通过冒烟测试
 
 **第 2 周交付物**：
 - Pre-commit hook: Frontmatter 校验 + SQLite 同步
@@ -452,6 +463,8 @@ CREATE TABLE IF NOT EXISTS change_log (
 **第 5 周交付物**：Skill-H/Skill-G 开发完成、首版全景仪表盘、销售作战卡模板、发版说明模板、6 大度量指标验证
 
 **第 6 周交付物**：全员培训（3 小时工作坊）、研发总监使用 Skill-H、市场部使用 Skill-G 生成首份销售卡、度量快照首次运行
+- Datasette Web UI 上线，团队成员可自助浏览文档索引和度量指标
+- Mermaid CLI 导出依赖图 SVG 至 05_Reports/
 
 **验收标准**：
 - 研发总监能看到全景依赖图和健康度评分
@@ -499,3 +512,47 @@ CREATE TABLE IF NOT EXISTS change_log (
 
 **升级原则**：数据格式不变（始终 Markdown + YAML Frontmatter）、渐进式升级、
 有明确前提条件和决策标准、升级决策本身也是 ADR。
+
+### 5.8 git-cliff 自动 CHANGELOG 生成
+
+WisdomCore 推荐使用 [git-cliff](https://github.com/orhun/git-cliff) 从 Git commit 历史自动生成 CHANGELOG.md，减少手动维护风险（对应风险 R3）。
+
+**配置文件 `.meta/cliff.toml`：**
+
+```toml
+[changelog]
+header = "# Changelog\n\nAll notable changes to WisdomCore will be documented in this file.\n"
+body = """
+{% for group, commits in commits | group_by(attribute="group") %}
+### {{ group | upper_first }}
+{% for commit in commits %}
+- {{ commit.message | upper_first }} ({{ commit.id | truncate(length=7, end="") }})
+{% endfor %}
+{% endfor %}
+"""
+trim = true
+
+[git]
+conventional_commits = true
+commit_parsers = [
+    { message = "^feat", group = "Added" },
+    { message = "^update", group = "Changed" },
+    { message = "^fix", group = "Fixed" },
+    { message = "^status", group = "Status Changes" },
+    { message = "^archive", group = "Archived" },
+    { message = "^meta", group = "Meta" },
+    { message = "^refactor", group = "Refactored" },
+]
+```
+
+**发版流程（增强版）：**
+
+```bash
+# 1. 更新 SKILL.md version 字段
+# 2. 自动生成 CHANGELOG
+git cliff --config .meta/cliff.toml -o CHANGELOG.md
+
+# 3. 提交 + 打 tag
+git add -A && git commit -m "meta(release): v1.1.0"
+git tag v1.1.0 && git push origin main --tags
+```

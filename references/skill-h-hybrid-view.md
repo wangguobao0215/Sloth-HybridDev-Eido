@@ -151,6 +151,23 @@ WHERE source_id IN (上述节点列表) OR target_id IN (上述节点列表);
 
 输出为 Mermaid `graph` 代码块，可在支持 Mermaid 的编辑器或 Git 平台中渲染。
 
+### 依赖图 SVG/PNG 导出
+
+当需要将依赖图嵌入 PPT、邮件或外部文档时，使用 Mermaid CLI 导出：
+
+```bash
+# 从 SQLite 动态生成 Mermaid 源文件
+python3 .meta/scripts/generate_dependency_mermaid.py > 05_Reports/dependency-graph.mmd
+
+# 导出为 SVG（推荐，矢量无损）
+mmdc -i 05_Reports/dependency-graph.mmd -o 05_Reports/dependency-graph.svg -t dark
+
+# 导出为 PNG（兼容性更好）
+mmdc -i 05_Reports/dependency-graph.mmd -o 05_Reports/dependency-graph.png -w 2400 -H 1600
+```
+
+导出的图片自动保存至 `05_Reports/`，可在周报和仪式议程中直接引用。
+
 ---
 
 ## 4. 健康度评分模型（Health Score Model）
@@ -321,6 +338,7 @@ Skill-H 持续监测以下 8 种异常模式，发现后立即在报告中高亮
 
 ```python
 def detect_cycles():
+    # 推荐使用 sqlite-utils 查询: sqlite_utils.Database('.wisdomcore.db').execute("SELECT source_id, target_id FROM dependencies").fetchall()
     graph = build_adjacency_list_from_dependencies()
     visited = set()
     rec_stack = set()
@@ -346,7 +364,42 @@ def detect_cycles():
 
 ---
 
-## 8. 技术实现要点
+## 8. Datasette 自助服务模式
+
+Skill-H 支持双通道输出：AI 对话查询（默认）和 Datasette Web UI（自助）。
+
+### 8.1 启动自助仪表盘
+
+```bash
+# 启动 Datasette（只读，端口 8001）
+datasette .wisdomcore.db --metadata .meta/datasette-metadata.json -p 8001
+```
+
+启动后团队成员可在浏览器访问 `http://localhost:8001`，自助执行以下操作：
+
+| 场景 | Datasette 路径 | 等效 Skill-H 命令 |
+|------|---------------|------------------|
+| 查看全部活跃协议 | `/wisdomcore/active-agreements` | "显示活跃协议" |
+| 查看最新健康度指标 | `/wisdomcore/health-metrics-latest` | "健康度评分" |
+| 查找僵尸文档 | `/wisdomcore/zombie-documents` | "僵尸文档检测" |
+| 浏览依赖关系 | `/wisdomcore/dependency-graph` | "全景依赖图" |
+| 自定义 SQL 查询 | `/wisdomcore?sql=...` | 自由查询 |
+
+### 8.2 与 AI 对话模式的分工
+
+| 维度 | AI 对话模式 | Datasette 自助模式 |
+|------|-----------|-------------------|
+| 适用场景 | 复杂分析、自然语言提问、异常解读 | 固定报表、自助浏览、数据导出 |
+| 交互方式 | 对话式，支持追问 | 点击式，支持 SQL |
+| 输出格式 | Markdown 报告 + Mermaid 图 | HTML 表格 + JSON API + CSV 导出 |
+| 实时性 | 每次对话时查询 | Web UI 实时刷新 |
+| 离线支持 | 完全离线 | 完全离线（localhost） |
+
+> **最佳实践**：日常巡检用 Datasette 快速扫描，发现异常后切换到 AI 对话模式深度分析。
+
+---
+
+## 9. 技术实现要点
 
 | 要点 | 实现方式 | 原因 |
 |------|---------|------|
@@ -359,7 +412,7 @@ def detect_cycles():
 
 ---
 
-## 9. 与其他 Skill 的交互
+## 10. 与其他 Skill 的交互
 
 | 交互方向 | 交互内容 | 数据源 |
 |---------|---------|--------|

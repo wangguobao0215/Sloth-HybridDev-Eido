@@ -27,6 +27,7 @@
 - **Agreement State Machine** — 7 states, 13 transitions, violation detection and renegotiation workflow
 - **Document Governance** — Freshness mechanism, decay detection, ownership system, change impact analysis
 - **Metrics System** — 6 core metrics (agreement coverage, compliance rate, document freshness, linkage rate, GTM turnaround, zombie count)
+- **Open-Source Toolchain** — sqlite-utils + Datasette + remark-lint + phodal/adr + git-cliff + Mermaid CLI + markdownlint, zero custom dependencies
 
 ## Quick Start
 
@@ -37,7 +38,7 @@
 
 ## Version
 
-Current version: 1.0.0
+Current version: 1.1.0
 
 ## License
 

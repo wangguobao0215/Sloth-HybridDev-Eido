@@ -56,6 +56,10 @@
 | 重建脚本 | `.meta/scripts/rebuild_index.sh` | 全量重建索引 |
 | 度量快照脚本 | `.meta/scripts/metrics_snapshot.py` | 每周自动采集 6 大核心指标快照 |
 | 仪表盘生成脚本 | `.meta/scripts/generate_dashboard.py` | 生成健康度仪表盘与趋势图表 |
+| Datasette 启动脚本 | `.meta/scripts/serve_dashboard.sh` | 启动 Datasette Web UI: `datasette .wisdomcore.db -p 8001` |
+| Mermaid 导出脚本 | `.meta/scripts/generate_dependency_mermaid.py` | 从 SQLite 生成依赖图 Mermaid 文件 |
+| CHANGELOG 生成配置 | `.meta/cliff.toml` | git-cliff 配置文件，自动生成 CHANGELOG.md |
+| markdownlint 配置 | `.meta/.markdownlint.yaml` | Markdown 风格检查规则 |
 
 ---
 
@@ -908,6 +912,8 @@ governance:
 | GTM - Release Note | `RN-{version}.md` | `RN-v2.1.0.md` |
 | GTM - Battle Card | `BC-{competitor-slug}.md` | `BC-competitor-alpha.md` |
 | GTM - Feature Brief | `FB-{feature-slug}.md` | `FB-ai-code-review.md` |
+
+> **CLI 兼容**：ADR 文件可通过 `adr new "{title}"` 命令创建（phodal/adr），创建后需补充 WisdomCore 扩展 Frontmatter。
 
 ### 5.2 Slug 生成规则
 

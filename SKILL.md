@@ -1,6 +1,6 @@
 ---
 name: Sloth-HybridDev-Eido
-version: 1.0.0
+version: 1.1.0
 description: >-
   Hybrid R&D management skill for teams building SaaS + AI products.
   Orchestrates 4 child Skills across a "Central Nervous System" architecture:
@@ -12,7 +12,7 @@ description_zh: >-
   混合视图生成器(H)、GTM知识架构师(G)。Markdown + SQLite 双写，Git 版本控制，本地优先。
 ---
 
-# Sloth-HybridDev-Eido -- 智核 (WisdomCore) V1.0
+# Sloth-HybridDev-Eido -- 智核 (WisdomCore) V1.1
 
 > <p align="center"><img src="https://raw.githubusercontent.com/wangguobao0215/Sloth-HybridDev-Eido/main/assets/qrcode.jpg" width="80" /><br/><sub>扫码关注 <b>树懒老K</b> · 获取更多 AI 技能</sub><br/><i>慢一点，深一度</i></p>
 >
@@ -32,7 +32,7 @@ description_zh: >-
 - 管理对象：知识文档（PRD/EXP/CA/ADR/GTM）和协作承诺，不管理具体开发任务
 - 存储方式：本地 Markdown + SQLite，不依赖云端服务
 - 执行方式：输出建议和报告供人工决策，不自动执行业务操作
-- 适用阶段：v1.0 小团队验证版，后续版本支持多团队协同和 CI/CD 集成
+- 适用阶段：v1.1 小团队验证版（含开源工具链集成），后续版本支持多团队协同和 CI/CD 集成
 
 核心设计哲学：
 
@@ -77,6 +77,7 @@ description_zh: >-
 | `权限` `安全` `谁能看` `角色` `CODEOWNERS` | 安全权限 | 角色权限矩阵（6 角色 x 5 文档类型） |
 | `风险` `缓解` `R1` `R2` `风险矩阵` | 风险矩阵 | R1-R10 十大风险识别、缓解策略与监控日历 |
 | `实施` `上线计划` `部署` `落地路径` | 实施路径 | 8 周 4 阶段计划：基础搭建 -> 生产者上线 -> 消费者上线 -> 度量优化 |
+| `工具链` `安装` `依赖` `sqlite-utils` `datasette` | 推荐工具链 | 7 个开源工具的安装指南、配置模板与集成架构 |
 
 ---
 
@@ -346,7 +347,7 @@ Draft --> UnderReview --> Active --> InViolation --> Renegotiating --> UnderRevi
 
 | 文件 | 内容 | 覆盖设计方案章节 |
 |------|------|----------------|
-| [architecture.md](references/architecture.md) | 中枢神经系统架构、双写机制、目录结构、SQLite Schema（6 表）、Git 工作流 | 第三章 |
+| [architecture.md](references/architecture.md) | 中枢神经系统架构、双写机制、目录结构、SQLite Schema（6 表）、Git 工作流、含推荐工具链 | 第三章 |
 | [parent-skill.md](references/parent-skill.md) | 父 Skill 规范：5 类文档 Frontmatter Schema、正文模板、标签体系、命名规范、ID 编号体系 | 第四章 |
 | [agreement-state-machine.md](references/agreement-state-machine.md) | 协作协议 7 态 13 转换、违约检测机制（自动+手动）、重新协商 5 步流程、版本追溯 | 第五章 |
 | [document-governance.md](references/document-governance.md) | 文档 Owner 制度、鲜度机制（计算公式+4 级等级）、腐烂检测与升级、绩效关联 | 第六章 |

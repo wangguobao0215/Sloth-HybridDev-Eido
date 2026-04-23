@@ -145,6 +145,15 @@ VALUES ('BCS-2026-005-001', '否定语义理解失败-坚果零食', 'Major', 'A
         '李华', 'Open');
 ```
 
+> **sqlite-utils 简化提示**：上述 SQL 操作可通过 sqlite-utils CLI 一行完成：
+> ```bash
+> # 查询某实验的全部 Bad Case
+> sqlite-utils query .wisdomcore.db "SELECT * FROM bad_cases WHERE experiment_id='EXP-2026-005'" --json
+>
+> # 插入新实验记录
+> echo '{"id":"EXP-2026-006","type":"Experiment","title":"..."}' | sqlite-utils insert .wisdomcore.db documents -
+> ```
+
 ---
 
 ## 4. 知识链接引擎（Knowledge Linking Engine）
@@ -304,7 +313,38 @@ CREATE TABLE bad_cases (
 
 ---
 
-## 8. 与其他 Skill 的交互
+## 8. Agent 交互记忆 (memweave 架构启发)
+
+Skill-A 支持将 AI Agent 的交互上下文持久化到 `.meta/memory/` 目录，采用 memweave 的 "Markdown 日记 + SQLite 索引" 模式。
+
+### 8.1 记忆文件格式
+
+```markdown
+---
+date: 2026-04-23
+session_type: experiment_review
+documents_touched: [EXP-2026-005, CA-2026-001]
+key_decisions:
+  - "决定采用 ONNX 格式部署语义搜索模型"
+  - "CA-2026-001 需要更新 P99 延迟指标从 500ms 到 300ms"
+follow_up_actions:
+  - "创建 ADR-004 记录 ONNX vs TensorRT 选型决策"
+---
+
+## 会话摘要
+
+用户要求分析 EXP-2026-005（语义搜索 A/B 测试）的结果...
+```
+
+### 8.2 记忆索引
+
+Agent 交互日志的 Frontmatter 同样通过 sqlite-utils 索引到 `.wisdomcore.db` 的 `agent_sessions` 表（可选扩展），支持按日期、涉及文档、决策关键词检索历史上下文。
+
+> **设计原则**：记忆层是可选增强，不影响核心功能。不启用时 Skill-A 完全正常工作。
+
+---
+
+## 9. 与其他 Skill 的交互
 
 | 交互方向 | 交互内容 | 触发时机 | 数据流 |
 |---------|---------|---------|--------|

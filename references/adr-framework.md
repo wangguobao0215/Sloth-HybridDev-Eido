@@ -298,3 +298,39 @@ wc adr list --team ai-search        # 查看特定团队的 ADR
 wc adr list --category ModelSelection  # 查看特定决策类别
 wc adr list --due-soon              # 查看即将到期需要复审的 ADR
 ```
+
+---
+
+## 8. CLI 工具集成 (phodal/adr)
+
+WisdomCore 推荐使用 [phodal/adr](https://github.com/phodal/adr) 作为 ADR 管理的 CLI 工具，它是 npryce/adr-tools 的 JS 重写版本，原生支持中文，与 WisdomCore 的 ADR 工作流完美适配。
+
+### 8.1 安装与初始化
+
+```bash
+# 全局安装
+npm install -g adr
+
+# 在 WisdomCore 根目录初始化（指定 ADR 目录）
+adr init 02_AI_Exploration/decisions
+```
+
+### 8.2 常用命令
+
+| 命令 | 用途 | 对应 Skill-A 操作 |
+|------|------|------------------|
+| `adr new "选择向量搜索引擎"` | 创建新 ADR（自动编号） | "记录一个架构决策" |
+| `adr list` | 列出所有 ADR | "列出所有架构决策" |
+| `adr generate toc` | 生成目录页 | 自动更新 ADR 索引 |
+| `adr export csv` | 导出 CSV | 度量采集数据源 |
+| `adr logs` | 查看决策时间线 | "ADR 时间线" |
+
+### 8.3 与 WisdomCore Frontmatter 的集成
+
+phodal/adr 生成的 ADR 文件使用标准 Markdown 格式。需要在创建后手动补充 WisdomCore 扩展的 Frontmatter 字段（`related_experiments`, `team`, `product_line`）。建议流程：
+
+1. `adr new "{title}"` — 生成基础 ADR 文件
+2. 手动或通过 Skill-A 补充 WisdomCore Frontmatter
+3. `git add` + Pre-commit Hook 自动校验 + SQLite 同步
+
+> **自动化增强**：可编写一个 `adr-post-create.sh` 钩子，在 `adr new` 执行后自动注入 WisdomCore Frontmatter 模板。
