@@ -1,11 +1,15 @@
 ---
-name: Sloth-HybridDev-Eido
-version: 1.1.0
+name: sloth-hybriddev-eido
+version: 1.1.1
 description: >-
   Hybrid R&D management skill for teams building SaaS + AI products.
   Orchestrates 4 child Skills across a "Central Nervous System" architecture:
   Agreement Forge (S), Experiment Log (A), Hybrid View (H), GTM Architect (G).
   Markdown + SQLite dual-write, Git-versioned, local-first.
+  Use when managing hybrid SaaS+AI R&D teams, creating collaboration agreements
+  between SaaS and AI workstreams, logging AI experiments, generating health
+  dashboards or document governance reports, or producing GTM assets like
+  battle cards and release notes.
 description_zh: >-
   混合研发管理技能，适用于同时构建 SaaS 与 AI 产品的团队。
   以"中枢神经系统"架构编排4个子Skill：协作协议生成器(S)、实验记录员(A)、
@@ -83,75 +87,11 @@ description_zh: >-
 
 ## 核心架构概览
 
-智核采用 **"中枢神经系统"** 架构，四个子 Skill 不是对称的模块，而是一条有方向性的数据管线：输入 -> 存储 -> 分析 -> 输出。
+智核采用 **"中枢神经系统"** 架构，四个子 Skill 形成有方向性的数据管线：感觉神经（Skill-S/A 数据输入）→ 脊髓（父 Skill 双写通路）→ 大脑（Skill-H 分析判断）→ 运动神经（Skill-G 对外输出）。
 
-```
-  +-----------------------------------------------------------------+
-  |               智核 WisdomCore -- 中枢神经系统架构                  |
-  +-----------------------------------------------------------------+
-  |                                                                   |
-  |   感觉神经（数据输入 -- 第一批上线）                                |
-  |                                                                   |
-  |   [SaaS PM] --> Skill-S --> 01_SaaS_Requirements/*.md             |
-  |                     |-----> 03_Collaboration_Agreements/*.md       |
-  |                                                                   |
-  |   [AI PM]   --> Skill-A --> 02_AI_Exploration/experiments/*.md     |
-  |                     |-----> 02_AI_Exploration/decisions/*.md       |
-  |                                                                   |
-  |   =========================|==============================        |
-  |            脊髓（数据通路）-- 父 Skill                              |
-  |                             |                                     |
-  |     Markdown 文件 (Source of Truth)  <-- 双写 -->  SQLite 索引     |
-  |     Git 版本控制 & 审计追踪          rebuild-index 可全量重建       |
-  |                             |                                     |
-  |   =========================|==============================        |
-  |                                                                   |
-  |   大脑（分析判断 -- 第二批上线）  运动神经（对外输出 -- 第二批上线）  |
-  |                                                                   |
-  |   Skill-H --> 健康度报告        Skill-G --> 04_GTM_Knowledge/      |
-  |          |--> 风险预警               |----> Feature Brief          |
-  |          |--> 依赖链分析             |----> Battle Card            |
-  |          |--> 度量仪表盘             |----> Release Notes          |
-  |               |                          |                        |
-  |          [研发总监]                 [市场/销售]                     |
-  +-----------------------------------------------------------------+
-```
+**双写机制**：Markdown 文件 = Source of Truth，SQLite = Query Layer，冲突时 Markdown 为准，`rebuild-index` 可全量重建。
 
-### 双写机制
-
-- **Markdown 文件** = Source of Truth（人类可读、Git diff 友好、离线可用、易迁移）
-- **SQLite 数据库** = Query Layer（复杂查询、聚合统计、跨文档 JOIN、毫秒级响应）
-- 同步路径一：Pre-commit Hook（推荐，保证每次 commit 时一致）
-- 同步路径二：On-save Watcher（可选，提升本地开发即时查询体验）
-- 冲突解决：Markdown 为准，执行 `rebuild-index` 可从文件全量重建 SQLite
-
-### 目录结构
-
-```
-WisdomCore-Root/
-+-- .meta/                           # 系统元数据与配置
-|   +-- config.yaml                  # 全局配置（团队/产品线/默认值）
-|   +-- team-roster.yaml             # 团队白名单（成员/角色/权限）
-|   +-- tag-taxonomy.yaml            # 标签体系（二级分类 + 治理规则）
-|   +-- schema.sql                   # SQLite 完整建表语句
-|   +-- schema/                      # 5 类文档的 JSON Schema 校验
-|   +-- scripts/                     # 同步/校验/重建/仪表盘脚本
-|   +-- hooks/                       # Git Pre-commit / Commit-msg Hook
-|   +-- templates/                   # 7 套文档模板
-+-- 01_SaaS_Requirements/            # SaaS 需求池（按季度组织）
-+-- 02_AI_Exploration/               # AI 实验报告 + 架构决策记录
-|   +-- experiments/
-|   +-- decisions/
-+-- 03_Collaboration_Agreements/     # 协作协议库
-+-- 04_GTM_Knowledge/                # GTM 资产
-|   +-- release-notes/
-|   +-- battle-cards/
-|   +-- feature-briefs/
-+-- 05_Archive/                      # 归档区（已关闭/废弃文档）
-+-- .wisdomcore.db                   # SQLite 索引数据库（Git ignored）
-```
-
-详细架构设计（含 SQLite Schema 6 表、Git 分支策略、外部工具集成点）见 [references/architecture.md](references/architecture.md)。
+详细架构设计（含完整架构图、SQLite Schema 6 表、目录结构、Git 分支策略、工具集成点）见 [references/architecture.md](references/architecture.md)。
 
 ---
 
@@ -201,54 +141,7 @@ AI 实验全生命周期管理。模板化实验报告创建（假设/方法/数
 
 ## 协作协议状态机概览
 
-协作协议共有 **7 种状态**，覆盖从初创到终结的完整生命周期，**13 条合法转换路径**：
-
-| 状态 | Frontmatter 值 | 含义 | 最大停留时限 |
-|------|----------------|------|-------------|
-| 草稿 | `Draft` | 协议初创，内容编写中 | 7 天 |
-| 评审中 | `UnderReview` | 等待双方 Owner 审批（PR created） | 5 工作日 |
-| 生效 | `Active` | 双方审批通过，正式指导开发 | 按 review_cadence_days |
-| 违约 | `InViolation` | 验收指标不达标，需干预 | 10 天内必须处置 |
-| 重新协商 | `Renegotiating` | 协议修订中（版本号 +1） | 14 天 |
-| 已替代 | `Superseded` | 被新版本替代（终态） | 永久 |
-| 已归档 | `Archived` | 项目终止或功能下线（终态） | 永久 |
-
-**核心转换路径**：
-
-```
-Draft --> UnderReview --> Active --> InViolation --> Renegotiating --> UnderReview
-  |                        |                              |
-  +--> Archived (超时)      +--> Superseded (新版本生效)     +--> InViolation (放弃修订)
-                           +--> Renegotiating (预防性修订)
-                           +--> Archived   (项目终止)
-```
-
-**13 条合法转换完整清单**：
-
-1. Draft -> UnderReview（提交评审）
-2. UnderReview -> Active（审批通过）
-3. UnderReview -> Draft（驳回修改）
-4. Active -> InViolation（违约检测触发）
-5. Active -> Renegotiating（预防性修订）
-6. Active -> Superseded（新版本生效）
-7. Active -> Archived（协议到期/双方同意废弃）
-8. InViolation -> Renegotiating（启动重新协商）
-9. InViolation -> Archived（双方同意终止）
-10. InViolation -> InViolation（升级，自转换）
-11. Renegotiating -> UnderReview（修订完成提交评审）
-12. Renegotiating -> InViolation（放弃修订，原状态为 InViolation）
-13. Draft -> Archived（30天未提交，超时归档）
-
-**明确禁止的转换**：Superseded/Archived -> 任何状态（终态不可逆）；Draft -> Active（不可跳过评审）；InViolation -> Active（禁止直接转换，须经 Renegotiating -> UnderReview 路径）。
-
-**违约严重度 4 级**：
-
-| 等级 | 判定标准 | 系统响应 |
-|------|---------|---------|
-| Warning | 指标距阈值差距 < 10% | 通知双方 Owner，仪表盘标黄 |
-| Minor | 单次检测未达标 | 记录违约日志，仪表盘标橙 |
-| Major | 连续 2 周未达标 | 自动触发 InViolation，通知研发总监 |
-| Critical | 核心指标偏离 > 30% | 自动触发 InViolation，通知高管，建议暂停关联开发 |
+协作协议共有 **7 种状态**（Draft → UnderReview → Active → InViolation → Renegotiating → Superseded/Archived），**13 条合法转换路径**，含 4 级违约严重度（Warning/Minor/Major/Critical）自动检测机制。终态（Superseded/Archived）不可逆，Draft 不可跳过评审直达 Active。
 
 详见 [references/agreement-state-machine.md](references/agreement-state-machine.md)。
 
@@ -256,28 +149,7 @@ Draft --> UnderReview --> Active --> InViolation --> Renegotiating --> UnderRevi
 
 ## 文档治理概览
 
-### 鲜度等级
-
-鲜度 = (当前日期 - updated_at) / review_cadence_days x 100%
-
-| 等级 | 鲜度值 | 系统行为 |
-|------|--------|---------|
-| 🟢 新鲜 (Fresh) | < 80% | 无特殊处理，仪表盘显示绿色 |
-| 🟡 临近 (Due Soon) | 80% - 99% | 通知 Owner 准备更新 |
-| 🔴 过期 (Overdue) | 100% - 199% | 每 3 天重复通知 Owner，仪表盘标红 |
-| 💀 腐烂 (Decayed) | >= 200% | 通知 Owner + 研发总监，仪表盘全局横幅 |
-
-各文档类型复审周期：PRD 14 天、EXP(进行中) 7 天、EXP(已完成) 30 天、CA 按 review_cadence_days 字段（默认 14 天）、ADR 90 天、GTM 30 天。
-
-### Owner 制度
-
-每份文档必须有明确 Owner（协作协议为双 Owner：saas_owner + ai_owner）。Owner 承担四项义务：
-1. **定期复审**：在 next_review_date 前完成内容审核
-2. **响应变更通知**：关联文档变更后 3 个工作日内评估影响
-3. **保持 Frontmatter 准确**：status/tags/updated_at 与实际一致
-4. **交接义务**：离职或转岗时完成所有权交接
-
-无主文档超过 5 天未认领由研发总监强制指派。连续 30 天处于 Decayed 状态的文档由系统自动创建归档提案。
+文档鲜度 = (当前日期 - updated_at) / review_cadence_days x 100%，分 4 级：🟢 新鲜(<80%) → 🟡 临近(80-99%) → 🔴 过期(100-199%) → 💀 腐烂(>=200%)。每份文档必须有明确 Owner（协议为双 Owner），无主文档超 5 天由研发总监强制指派，连续 30 天 Decayed 自动创建归档提案。
 
 详见 [references/document-governance.md](references/document-governance.md)。
 
@@ -285,27 +157,9 @@ Draft --> UnderReview --> Active --> InViolation --> Renegotiating --> UnderRevi
 
 ## 度量体系概览
 
-核心信念：少量指标 x 明确阈值 x 自动采集 x 行动驱动 = 有效度量。指标数量控制在 6 个以内（认知心理学工作记忆容量 7 +/- 2）。
+6 大核心指标（认知心理学 7±2 原则）：协作协议覆盖率(ACR ≥90%)、协议合规率(ACMR ≥85%)、文档鲜度(DF ≥70%)、需求-实验关联率(RELR ≥80%)、GTM产出周期(GTT ≤5天)、僵尸文档数(ZDC ≤3篇)。每个指标含健康/预警/危险三级阈值及自动触发动作。
 
-| 指标 | 缩写 | 健康阈值 | 预警阈值 | 危险阈值 |
-|------|------|---------|---------|---------|
-| 协作协议覆盖率 | ACR | >= 90% | 70%-89% | < 70% |
-| 协议合规率 | ACMR | >= 85% | 70%-84% | < 70% |
-| 文档鲜度 | DF | >= 70% | 50%-69% | < 50% |
-| 需求-实验关联率 | RELR | >= 80% | 60%-79% | < 60% |
-| GTM 产出周期 | GTT | <= 5 天 | 5-10 天 | > 10 天 |
-| 僵尸文档数 | ZDC | <= 3 篇 | 4-8 篇 | > 8 篇 |
-
-每个指标均定义了危险触发动作（如 ACR 危险时 Skill-H 自动列出无协议的 AI 需求清单）。指标由 `metrics_snapshot.py` 每周日自动采集并写入 `metrics_snapshots` 表，支持趋势分析和同比环比。
-
-### 协作仪式概览
-
-| 级别 | 频率 | 参与者 | 核心内容 |
-|------|------|--------|---------|
-| L1 每日 | 每天 | 全团队 | 15 分钟站会，聚焦阻塞点 |
-| L2 每周 | 每周 | Owner + Tech Lead | 文档鲜度巡检、违约协议处置 |
-| L3 双周 | 每 Sprint | 全团队 | Sprint Review 含文档清理环节 |
-| L4 季度 | 每季 | 管理层 | 架构回顾、标签体系评审、风险矩阵更新 |
+4 级协作仪式：L1 每日站会 → L2 每周文档巡检 → L3 双周 Sprint Review → L4 季度架构回顾。
 
 详见 [references/metrics-ceremonies-risk-impl.md](references/metrics-ceremonies-risk-impl.md)。
 

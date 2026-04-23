@@ -38,7 +38,7 @@
 
 ## Version
 
-Current version: 1.1.0
+Current version: 1.1.1
 
 ## License
 

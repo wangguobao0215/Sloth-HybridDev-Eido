@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.1.1] - 2026-04-23
+
+### Changed
+
+- **SKILL.md `name` 字段改为全小写**（`sloth-hybriddev-eido`），对齐 QoderWork 官方 Skill 规范（仅限小写字母/数字/连字符）
+- **SKILL.md `description` 补充触发条件**（增加 "Use when..." 句式），对齐官方规范要求的 WHAT + WHEN 双要素
+- **SKILL.md 正文精简 39%**（371行→225行，23KB→16KB），将与 references/ 重复的大段内容（架构图、状态机转换表、度量指标表、仪式日历等）替换为一句话摘要 + 链接，符合官方 "Concise is Key" 和 Progressive Disclosure 原则
+
 ## [1.1.0] - 2026-04-23
 
 ### Added
