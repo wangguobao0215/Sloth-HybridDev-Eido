@@ -393,8 +393,8 @@ CREATE TABLE metrics_snapshots (
     created_at      TEXT NOT NULL DEFAULT (datetime('now')),
     UNIQUE(snapshot_date, metric_name, dimension)
 );
--- 预定义指标: ACR(协议合规率), ACMR(协议违约率), DF(文档新鲜度),
--- RELR(发布就绪率), GTT(GTM 上线时间), ZDC(零漂移覆盖率)
+-- 预定义指标: ACR(协议覆盖率), ACMR(协议合规率), DF(文档鲜度),
+-- RELR(需求-实验关联率), GTT(GTM产出周期), ZDC(僵尸文档数)
 
 -- 5. 变更日志表 (change_log)
 CREATE TABLE change_log (

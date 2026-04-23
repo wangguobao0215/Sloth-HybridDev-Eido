@@ -141,7 +141,7 @@ AI 实验全生命周期管理。模板化实验报告创建（假设/方法/数
 
 ## 协作协议状态机概览
 
-协作协议共有 **7 种状态**（Draft → UnderReview → Active → InViolation → Renegotiating → Superseded/Archived），**13 条合法转换路径**，含 4 级违约严重度（Warning/Minor/Major/Critical）自动检测机制。终态（Superseded/Archived）不可逆，Draft 不可跳过评审直达 Active。
+协作协议共有 **7 种状态**（Draft → UnderReview → Active → InViolation → Renegotiating → Superseded/Archived），**15 条状态转换（13 条核心 + 2 条边界）**，含 4 级违约严重度（Warning/Minor/Major/Critical）自动检测机制。终态（Superseded/Archived）不可逆，Draft 不可跳过评审直达 Active。
 
 详见 [references/agreement-state-machine.md](references/agreement-state-machine.md)。
 

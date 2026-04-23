@@ -206,7 +206,7 @@ WisdomCore/
 
 ### 5.1 协作协议状态机
 
-协作协议共有 7 种状态和 13 条合法转换路径：
+协作协议共有 7 种状态和 15 条状态转换（13 条核心 + 2 条边界）：
 
 ```
 Draft → UnderReview → Active → InViolation → Renegotiating
