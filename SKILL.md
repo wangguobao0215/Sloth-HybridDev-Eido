@@ -219,7 +219,7 @@ AI 实验全生命周期管理。模板化实验报告创建（假设/方法/数
 
 | 协同 Skill | 协同方式 |
 |-----------|---------|
-| Sloth-ConventionGuard-Eido | 合规审计：确保本 Skill 仓库符合家族公约 v1.2 的 37 项检查 |
+| Sloth-ConventionGuard-Eido | 合规审计：确保本 Skill 仓库符合家族公约 v1.3 的审计检查清单 |
 | Sloth-Sales-Eido | GTM 资产对接：Skill-G 生成的 Battle Card / Feature Brief 可直接导入 Sales Skill 的客户管理流程 |
 | Sloth-PSC-Eido | 售前方案支撑：售前顾问可从 GTM 资产中获取 AI 能力的技术底气和量化数据 |
 | Sloth-SkillPipeline-Eido | 生产来源：本 Skill 由 SkillPipeline 6 步流水线生产，遵循结构创建-缺口分析-专家评审-竞品情报-合规审计-部署的标准化流程 |

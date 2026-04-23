@@ -36,6 +36,10 @@
 3. Create your first agreement: "Create a collaboration agreement for smart search"
 4. Check overall status: "Show me the hybrid view dashboard"
 
+## Documentation
+
+- [User Guide](references/user-guide.md) — Complete usage guide, best practices, and FAQ
+
 ## Version
 
 Current version: 1.1.1
