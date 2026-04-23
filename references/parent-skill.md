@@ -9,7 +9,7 @@
 
 ### 1.1 什么是父Skill
 
-父Skill **不是代码**，而是一套**规范（Specification）**。它定义了智核系统的"骨架"：
+父Skill **不是代码**，而是一套**规范（Specification）**。它定义了深构系统的"骨架"：
 
 - **目录结构**：文件放在哪里、如何组织
 - **文档模板**：每类文档的 Frontmatter 字段和正文结构
@@ -215,7 +215,7 @@ Proposed -> InProgress -> Completed -> Validated -> (输出ADR/CA)
 
 ### 2.3 协作协议 (CollaborationAgreement)
 
-协作协议是智核系统中最复杂、最核心的文档类型，定义 SaaS 与 AI 两侧的接口约定、质量标准和降级策略。
+协作协议是深构系统中最复杂、最核心的文档类型，定义 SaaS 与 AI 两侧的接口约定、质量标准和降级策略。
 
 ```yaml
 ---

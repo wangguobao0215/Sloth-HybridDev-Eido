@@ -5,7 +5,7 @@
 <h1 align="center">Sloth-HybridDev-Eido</h1>
 
 <p align="center">
-  <strong>Hybrid R&D Management Hub — Unifying SaaS Determinism with AI Probabilistic Exploration</strong><br/>
+  <strong>深构 · 研发协同 — Hybrid R&D Management Hub — Unifying SaaS Determinism with AI Probabilistic Exploration</strong><br/>
   Agreement Forge (S) · Experiment Log (A) · Hybrid View (H) · GTM Architect (G)
 </p>
 
